@@ -1,0 +1,17 @@
+body {
+    font-family: monospace;
+    font-size: 1.1em;
+    margin: 1em;
+    transition: 0.5s;
+} .on {
+    color: #111;
+    background-color: #EEE;
+} .off {
+    color: #DDD;
+    background-color: #222;
+}
+
+#toggle {
+    position: absolute;
+    bottom: 1em;
+}

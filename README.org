@@ -1,0 +1,7 @@
+Some PoC to play with Clojure webstuff and filesystems
+
+* TODO
+- Add functionality
+- Private files, likely some visbility blacklist via uploading a special .private file containing newline-delimited filenames.
+- Automatic tagging and search
+  - Possibly some kind of usefulness/popularity ranking per tag

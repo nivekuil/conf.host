@@ -1,0 +1,29 @@
+<head>
+    <title>conf.host</title>
+    <link rel="stylesheet" href="/css/index.css">
+    <script src="/js/index.js"></script>
+</head>
+<body class="{{lights}}">
+    <h1>conf.host</h1>
+    <h2>A service for storing, syncing, and sharing configuration files.</h2>
+    <ol>
+        <li>Upload your SSH public key with a short, unique username
+            <form>
+                <input type="text" placeholder="SSH pubkey">
+                <input type="text" placeholder="username">
+                <input type="submit" value="Upload">
+            </form>
+            (or from the command line: curl --data "")
+        </li>
+        <li>
+           scp your files to <b>{{username}}@conf.host</b>
+        </li>
+        <li>
+            View them at <b>https://conf.host/{{username}}</b>
+            <br>
+        </li>
+    </ol>
+
+    <button id="toggle" onclick="toggleLights()">Lights {{not-lights}}</button>
+
+</body>
