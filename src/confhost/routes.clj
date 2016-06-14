@@ -23,6 +23,9 @@
   [cookie default]
   `(or (get-cookie ~cookie ~'request) ~default))
 
+(defn not-found []
+  (ring.util.response/not-found "You found the 404 page!  Try again."))
+
 (defn index-get [request]
   (let [username (cookie-or "username" "{username}")
         lights (cookie-or "lights" "on")
@@ -41,9 +44,6 @@
       (assoc (redirect "/")
              :cookies {"username" {:value username}})
       (not-found))))
-
-(defn not-found []
-  (ring.util.response/not-found "You found the 404 page!  Try again."))
 
 (defroutes index
   (GET "/" [] index-get)

@@ -11,7 +11,7 @@
   (-> (compojure.core/routes
        confhost.routes/index
        (route/resources "/")
-       (confhost.routes//not-found))
+       (confhost.routes/not-found))
       wrap-cookies wrap-params))
 #_
 (do (.stop server)
