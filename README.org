@@ -1,6 +1,6 @@
-Some PoC to play with Clojure webstuff and filesystems
+Some PoC to play with Clojure web stuff and filesystems.
 
-* TODO
+* Todo
 - Add functionality
 - Private files, likely some visbility blacklist via uploading a special .private file containing newline-delimited filenames.
 - Automatic tagging and search
