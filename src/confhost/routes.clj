@@ -2,7 +2,7 @@
   (:require
    [compojure.core :refer [defroutes GET POST]]
    [stencil.core :refer [render-string render-file]]
-   [ring.middleware.cookies :refer [cookies-request cookies-response]]))
+   [ring.util.response :refer [redirect]]))
 
 ;;; Set TTL to 0 so templates are instantly reloaded
 (stencil.loader/set-cache (clojure.core.cache/ttl-cache-factory {} :ttl 0))
@@ -16,7 +16,7 @@
 (defn get-cookie
   "Return the value of a cookie in the HTML request."
   [cookie request]
-  (:value ((:cookies request) cookie)))
+  (:value (get (:cookies request) cookie)))
 
 (defmacro cookie-or
   "Return the value of a cookie if it exists or a default value otherwise."
@@ -28,12 +28,22 @@
         lights (cookie-or "lights" "on")
         not-lights (if (= lights "off") "on" "off")]
     (render-template "index"
-                     {:username "{username}"
+                     {:username username
                       :lights lights
                       :not-lights not-lights})))
 
 (defn index-post [request]
-  (index-get [request]))
+  (let [username (get (:params request) "username")
+        pubkey (get (:params request) "pubkey")]
+    ;; TODO: Input validation
+    (println username pubkey)
+    (if (and username pubkey)
+      (assoc (redirect "/")
+             :cookies {"username" {:value username}})
+      (not-found))))
+
+(defn not-found []
+  (ring.util.response/not-found "You found the 404 page!  Try again."))
 
 (defroutes index
   (GET "/" [] index-get)

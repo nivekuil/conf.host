@@ -8,9 +8,9 @@
     <h2>A service for storing, syncing, and sharing configuration files.</h2>
     <ol>
         <li>Upload your SSH public key with a short, unique username
-            <form>
-                <input type="text" placeholder="SSH pubkey">
-                <input type="text" placeholder="username">
+            <form method="post">
+                <input type="text" name="pubkey" placeholder="SSH pubkey">
+                <input type="text" name="username" placeholder="username">
                 <input type="submit" value="Upload">
             </form>
             (or from the command line: curl --data "")
