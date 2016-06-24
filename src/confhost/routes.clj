@@ -23,28 +23,35 @@
   [cookie default]
   `(or (get-cookie ~cookie ~'request) ~default))
 
-(defn not-found []
+(def not-found
   (ring.util.response/not-found "You found the 404 page!  Try again."))
 
-(defn index-get [request]
-  (let [username (cookie-or "username" "{username}")
-        lights (cookie-or "lights" "on")
-        not-lights (if (= lights "off") "on" "off")]
-    (render-template "index"
-                     {:username username
-                      :lights lights
-                      :not-lights not-lights})))
+(def index-get
+  (GET
+   "/" request
+   (let [username (cookie-or "username" "{username}")
+         lights (cookie-or "lights" "on")
+         not-lights (if (= lights "off") "on" "off")]
+     (render-template "index"
+                      {:username username
+                       :lights lights
+                       :not-lights not-lights}))))
 
-(defn index-post [request]
-  (let [username (get (:params request) "username")
-        pubkey (get (:params request) "pubkey")]
-    ;; TODO: Input validation
-    (println username pubkey)
-    (if (and username pubkey)
-      (assoc (redirect "/")
-             :cookies {"username" {:value username}})
-      (not-found))))
+(def index-post
+  (POST
+   "/" {{username "username"} :params, {pubkey "pubkey"} :params}
+   ;; (println (true? ( username pubkey)))
+   ;; TODO: Input validation
+   ;; (confhost.httpclient/register username pubkey)
+   (if (or (clojure.string/blank? username)
+           (clojure.string/blank? pubkey))
+     not-found                          ;TODO: AJAX message
+     (assoc (redirect "/")
+            :cookies {"username" {:value username}}))))
 
-(defroutes index
-  (GET "/" [] index-get)
-  (POST "/" [] index-post))
+(def user-get
+  (GET "/:username" [username]
+       (render-template "index"
+                        {:username username})))
+
+(defroutes routes #'index-get #'index-post #'user-get #'not-found)
