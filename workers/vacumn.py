@@ -1,8 +1,10 @@
+#!/usr/bin/env python3
 """
-Worker that runs on an scp server, feeding recieved files into Elasticsearch
-and IPFS.
+Worker that runs on an scp endpoint, sending files from the airlock to the
+interplanetary file system (and Elasticsearch).
 """
 import os
+from subprocess import run, PIPE
 from ipfsApi import Client
 from elasticsearch import Elasticsearch
 from threading import Timer
@@ -11,15 +13,26 @@ ipfs = Client('127.0.0.1', 5001)
 es = Elasticsearch(
     hosts = ['127.0.0.1:9200'],
 )
-file_dir = "/home/nivekuil/code/confhost/test/"
+airlock = "/var/local/confhost/airlock/"
+path_len = len(airlock.split(os.path.sep))
 
 def push():
     Timer(0.5, push).start()
-    for root, dirs, files in os.walk(file_dir):
-        if root == file_dir: continue;
+    for root, dirs, files in os.walk(airlock):
+        # Don't look for files in the root dir
+        if root == airlock: continue
         for f in files:
-            username = root.split("/")[-1] # Name of parent directory
-            resource = root + "/" + f      # Name of the file
+
+            # Directory directly under airlock
+            username = root.split(os.path.sep)[path_len-1]
+            # Name of the file
+            resource = os.path.join(root, f)
+
+            # If fuser has any output, then the file is currently being used
+            # by another process.  This likely means that is is still being
+            # transferred, so skip it for now.
+            if run(["fuser", resource], stdout=PIPE).stdout:
+                continue
 
             if len(username) == 0:
                 raise ValueError("Username cannot be empty.")
@@ -45,7 +58,8 @@ def push():
 
         # Remove only empty directories, i.e. username directories after
         # all internal files have been uploaded to the cluster
-        os.rmdir(root)
+        # try: os.rmdir(root)
+        # except: continue
 
 if __name__ == "__main__":
     push()
