@@ -22,7 +22,7 @@ def post():
         return
 
     try:
-        run(["useradd", "--shell", shell, "-g", groupname, -m
+        run(["useradd", "--shell", shell, "-g", groupname,
              "-d", home + username, username])
         # Make the home dir, separately so skel files don't get added
         mkdir(home + username)
