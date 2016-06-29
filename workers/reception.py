@@ -6,7 +6,7 @@ from shutil import chown
 
 app = Flask(__name__)
 shell = "/usr/bin/rssh"
-home = "/var/local/confhost/airlock/"
+home = "/var/local/confhost/airlock"
 groupname = "users"
 
 @app.route("/", methods=['POST'])
@@ -23,14 +23,7 @@ def post():
 
     try:
         run(["useradd", "--shell", shell, "-g", groupname,
-             "-d", home + username, username])
-        # Make the home dir, separately so skel files don't get added
-        mkdir(home + username)
-        chown(home + username, user=username, group=groupname)
-        # mkdir(ssh_dir, 0o700)
-        # chown(ssh_dir, user=username, group=groupname)
-        # Home dir must be owned by root for sshd chroot
-        # chown(home + username, user="root", group="root")
+             "-d", home, username])
     except Exception as e:
         # Check if file exists
         if e.errno == 17:
