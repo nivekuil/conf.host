@@ -1,0 +1,33 @@
+h1 {
+    font-family: monospace;
+    text-align: center;
+}
+
+table {
+    margin: auto;
+}
+
+th, td {
+    padding-right: 2em;
+}
+
+a {
+    text-decoration: none;
+    color: #149;
+}
+
+a:hover {
+    color: #941;
+}
+
+.name {
+    text-align: left;
+}
+
+.size {
+    text-align: right;
+}
+
+.mtime {
+    text-align: right;
+}
