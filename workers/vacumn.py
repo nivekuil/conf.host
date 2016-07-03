@@ -6,9 +6,9 @@ interplanetary file system (and Elasticsearch).
 import os
 import pwd
 from subprocess import run, PIPE
+from threading import Timer
 from ipfsApi import Client
 from elasticsearch import Elasticsearch
-from threading import Timer
 
 ipfs = Client('127.0.0.1', 5001)
 es = Elasticsearch(
@@ -16,6 +16,7 @@ es = Elasticsearch(
 )
 airlock = "/var/local/confhost/airlock/"
 path_len = len(airlock.split(os.path.sep))
+index_name = "resource"         # Elasticsearch index to insert resources into
 
 def push():
     Timer(0.5, push).start()
@@ -24,8 +25,9 @@ def push():
         if entry.is_dir():
             continue
 
+        stat = entry.stat()
         # Get username by looking at file owner
-        username = pwd.getpwuid(entry.stat().st_uid).pw_name
+        username = pwd.getpwuid(stat.st_uid).pw_name
         # Full path of the file
         resource = entry.path
 
@@ -44,12 +46,16 @@ def push():
 
         body = {
             'owner': username,
-            'filesize': os.path.getsize(resource),
-            'last_modified': os.path.getmtime(resource),
-            'contents': open(resource).read(),
+            'filename': entry.name,
+            'filesize': stat.st_size,
+            'last_modified': stat.st_mtime,
+            'contents': None,
         }
+        with open(resource) as f:
+            body["contents"] = f.read()
+
         es.index(
-            index = "resource",
+            index = index_name,
             doc_type = username,
             id = resource_hash,
             body = body
