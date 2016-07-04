@@ -2,7 +2,10 @@
   (:require
    [compojure.core :refer [defroutes GET POST]]
    [stencil.core :refer [render-string render-file]]
-   [ring.util.response :refer [redirect]]))
+   [ring.util.response :refer [redirect]]
+   [confhost.httpclient :as httpclient]
+   [confhost.render :as render]
+   [confhost.search :as search]))
 
 ;;; Set TTL to 0 so templates are instantly reloaded
 (stencil.loader/set-cache (clojure.core.cache/ttl-cache-factory {} :ttl 0))
@@ -27,31 +30,33 @@
   (ring.util.response/not-found "You found the 404 page!  Try again."))
 
 (def index-get
-  (GET
-   "/" request
-   (let [username (cookie-or "username" "{username}")
-         lights (cookie-or "lights" "on")
-         not-lights (if (= lights "off") "on" "off")]
-     (render-template "index"
-                      {:username username
-                       :lights lights
-                       :not-lights not-lights}))))
+  (GET "/" request
+       (let [username (cookie-or "username" "$USER")
+             lights (cookie-or "lights" "on")
+             not-lights (if (= lights "off") "on" "off")]
+         (render-template "index"
+                          {:username username
+                           :lights lights
+                           :not-lights not-lights}))))
 
 (def index-post
   (POST
    "/" {{username "username"} :params, {pubkey "pubkey"} :params}
    ;; (println (true? ( username pubkey)))
    ;; TODO: Input validation
-   ;; (confhost.httpclient/register username pubkey)
    (if (or (clojure.string/blank? username)
            (clojure.string/blank? pubkey))
-     not-found                          ;TODO: AJAX message
-     (assoc (redirect "/")
-            :cookies {"username" {:value username}}))))
+     (redirect "/")                     ;TODO: AJAX message
+     (do (httpclient/register username pubkey)
+         (assoc (redirect "/")
+                :cookies {"username" {:value username}})))))
 
 (def user-get
   (GET "/:username" [username]
-       (render-template "index"
-                        {:username username})))
+       (let [query (search/query-user username)]
+         (render-template "user"
+                          {:username username
+                           :results (render/files (:results query))
+                           :num-results (:num-results query)}))))
 
 (defroutes routes #'index-get #'index-post #'user-get #'not-found)
