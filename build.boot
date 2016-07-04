@@ -1,7 +1,11 @@
 (set-env! :dependencies
-          '[[ring "1.4.0"]
+          '[[clj-http "2.2.0"]
+            [clojure-humanize "0.2.0"]
             [compojure "1.4.0"]
+            [hiccup "1.0.5"]
             [stencil "0.5.0"]
-            [buddy "0.13.0"]]
+            [ring "1.5.0"]
+            [clojurewerkz/elastisch "3.0.0-beta1"]
+            [org.immutant/web "2.1.4"]]
           :source-paths #{"src/"}
           :resource-paths #{"resources/"})
