@@ -1,6 +1,5 @@
 (ns confhost.render
   (:require [hiccup.core :refer [html]]
-            [simple-time.core :as time]
             [clojure.contrib.humanize :as humanize]))
 
 (def file-base "http://ipfs.io/ipfs/")
@@ -20,4 +19,4 @@
          (if (> filesize 1000)
            (humanize/filesize filesize) (str filesize "B"))]
         [:td {:class "mtime" :title mtime}
-         (time/format (time/datetime mtime) "YYYY-MM-dd")]]))))
+         (humanize/datetime mtime)]]))))
