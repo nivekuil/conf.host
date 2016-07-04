@@ -19,16 +19,12 @@ path_len = len(airlock.split(os.path.sep))
 index_name = "resource"         # Elasticsearch index to insert resources into
 
 def push():
-    Timer(0.5, push).start()
+    Timer(1, push).start()
     for entry in os.scandir(airlock):
         # TODO: Handle directories
         if entry.is_dir():
             continue
 
-        stat = entry.stat()
-        # Get username by looking at file owner
-        username = pwd.getpwuid(stat.st_uid).pw_name
-        # Full path of the file
         resource = entry.path
 
         # If fuser has any output, then the file is currently being used
@@ -36,6 +32,10 @@ def push():
         # transferred, so skip it for now.
         if run(["fuser", resource], stdout=PIPE).stdout:
             continue
+
+        stat = entry.stat()
+        # Get username by looking at file owner
+        username = pwd.getpwuid(stat.st_uid).pw_name
 
         if len(username) == 0:
             raise ValueError("Username cannot be empty.")
@@ -47,13 +47,16 @@ def push():
         body = {
             'owner': username,
             'filename': entry.name,
+            'extension': entry.name.split(".")[-1],
             'filesize': stat.st_size,
-            'last_modified': stat.st_mtime,
-            'contents': None,
+            'mtime': int(stat.st_mtime * 1000),
+            'contents': "",
         }
         with open(resource) as f:
             body["contents"] = f.read()
 
+        print("Adding to elasticsearch ", resource)
+        # Add file to Elasticsearch
         es.index(
             index = index_name,
             doc_type = username,
@@ -61,6 +64,7 @@ def push():
             body = body
         )
 
+        print("removing ", resource)
         os.remove(resource)
 
         # Remove only empty directories, i.e. username directories after
