@@ -1,10 +1,28 @@
+body {
+    background-color: #EEE;
+    color: #111;
+    margin: 1em 2em;
+}
+
 h1 {
     font-family: monospace;
-    text-align: center;
 }
 
 table {
-    margin: auto;
+    margin-left: 1em;
+    min-width: 30em;
+}
+
+table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):not(.sorttable_nosort):after {
+    content: " \25B8"
+}
+
+th {
+    cursor: pointer;
+    height: 2em;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
 }
 
 th, td {
@@ -20,14 +38,25 @@ a:hover {
     color: #941;
 }
 
-.name {
+.extension {
     text-align: left;
 }
 
-.size {
+.filename {
+    text-align: left;
+}
+
+.filesize {
     text-align: right;
 }
 
 .mtime {
-    text-align: right;
+    text-align: left;
+}
+
+#footer {
+    position: absolute;
+    bottom: 1em;
+    height: 1em;
+    margin-top: 1em;
 }

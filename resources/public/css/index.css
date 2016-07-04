@@ -1,7 +1,5 @@
 body {
-    font-family: monospace;
-    font-size: 1.1em;
-    margin: 1em;
+    margin: 1em 2em;
     transition: 0.5s;
 } .on {
     color: #111;
@@ -9,6 +7,11 @@ body {
 } .off {
     color: #DDD;
     background-color: #222;
+}
+
+.mono {
+    font-family: monaco, Consolas, Andale Mono, monospace;
+    font-size-adjust: 0.45;
 }
 
 #toggle {
