@@ -21,7 +21,9 @@
   [username]
   (let [search (:hits
                 (esd/search conn index username
-                            {:query {:type {:value username}} :size 500}))
+                            {:query {:type {:value username}}
+                             :size 500
+                             :sort {:mtime {:order "desc"}}}))
         ;; Use total from Elasticsearch to avoid redundant work
         num-results (:total search)
         results (:hits search)]
