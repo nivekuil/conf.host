@@ -18,5 +18,5 @@
         [:td {:class "filesize" :sorttable_customkey filesize}
          (if (> filesize 1000)
            (humanize/filesize filesize) (str filesize "B"))]
-        [:td {:class "mtime" :title mtime}
+        [:td {:class "mtime" :sorttable_customkey mtime :title mtime}
          (humanize/datetime mtime)]]))))
