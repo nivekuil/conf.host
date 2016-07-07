@@ -1,7 +1,17 @@
-Some PoC to play with Clojure web stuff and filesystems.
+The workers require Python 3.5, for =subprocess.run= and =os.scandir=.
 
 * Todo
-- Add functionality
-- Private files, likely some visbility blacklist via uploading a special .private file containing newline-delimited filenames.
+- Load balancing/redundancy of core nodes
+- Separate storage nodes from core nodes
+- Some system to track and prioritize files to be pinned
 - Automatic tagging and search
   - Possibly some kind of usefulness/popularity ranking per tag
+
+* REST API
+** GET /:username/hashes
+Get all hashes associated with a user.
+
+To run your own ipfs daemon and pin your own files for guaranteed access, pipe the output of this route into =ipfs pin=.
+#+BEGIN_EXAMPLE
+curl https://conf.host/nivekuil/hashes | ipfs pin add
+#+END_EXAMPLE
