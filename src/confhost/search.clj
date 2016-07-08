@@ -8,7 +8,7 @@
 (def conn (es/connect endpoints {"cluster.name" cluster-name}))
 (def index "resource")
 
-(defn parse-user [result]
+(defn parse-files [result]
   "Parse each file returned from the search for relevant metadata."
   (assoc (select-keys
           (:_source result)
@@ -19,13 +19,20 @@
   "Get all documents belonging to some user and return the metadata needed to
   generate the file browser interface."
   [username]
-  (let [search (:hits
-                (esd/search conn index username
-                            {:query {:type {:value username}}
-                             :size 500
-                             :sort {:mtime {:order "desc"}}}))
-        ;; Use total from Elasticsearch to avoid redundant work
-        num-results (:total search)
-        results (:hits search)]
-    {:num-results num-results
-     :results (map parse-user results)}))
+  (:hits
+   (esd/search conn index username
+               {:query {:type {:value username}}
+                :size 500
+                :sort {:mtime {:order "desc"}}})))
+
+(defn query-file
+  "Get the URI corresponding to a filename."
+  [username filename]
+  (:hits
+   (esd/search conn index username
+               {:query
+                {:filtered
+                 {:query {:type {:value username}}
+                  :filter (q/term "filename" filename)}}
+                :size 1
+                :sort {:mtime {:order "desc"}}})))

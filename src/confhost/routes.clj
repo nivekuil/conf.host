@@ -1,5 +1,6 @@
 (ns confhost.routes
   (:require
+   [clojure.string :as string]
    [compojure.core :refer [defroutes GET POST]]
    [stencil.core :refer [render-string render-file]]
    [ring.util.response :refer [redirect]]
@@ -44,8 +45,8 @@
    "/" {{username "username"} :params, {pubkey "pubkey"} :params}
    ;; (println (true? ( username pubkey)))
    ;; TODO: Input validation
-   (if (or (clojure.string/blank? username)
-           (clojure.string/blank? pubkey))
+   (if (or (string/blank? username)
+           (string/blank? pubkey))
      (redirect "/")                     ;TODO: AJAX message
      (do (httpclient/register username pubkey)
          (assoc (redirect "/")
@@ -53,10 +54,12 @@
 
 (def user-get
   (GET "/:username" [username]
-       (let [query (search/query-user username)]
+       (let [query (search/query-user username)
+             files (map search/parse-files (:hits query))
+             total (:total query)]
          (render-template "user"
                           {:username username
-                           :results (render/files (:results query))
-                           :num-results (:num-results query)}))))
+                           :body (render/files files)
+                           :total total}))))
 
 (defroutes routes #'index-get #'index-post #'user-get #'not-found)
