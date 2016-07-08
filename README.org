@@ -7,11 +7,42 @@ The workers require Python 3.5, for =subprocess.run= and =os.scandir=.
 - Automatic tagging and search
   - Possibly some kind of usefulness/popularity ranking per tag
 
+* Hidden files
+The Unix standard is to prefix hidden files with a dot.  However, conf.host treats these as regular files.  The rationale is that dotfiles are frequently intended to be shared, while truly private files are made inaccessible through access permissions or encryption.
+
+conf.host provides a convention for /hiding/ files, preventing them from showing up in searches such as a user's directory listing.  Hidden files are prefixed with a caret (^).
+#+BEGIN_EXAMPLE
+cp hide_me.txt ^hidden.txt
+scp ^hidden.txt user@conf.host:
+#+END_EXAMPLE
+
+However, hidden files are still added to IPFS, and accessible through the usual HTTP route:
+#+BEGIN_EXAMPLE
+wget https://conf.host/user/~hidden.txt
+#+END_EXAMPLE
+
+To truly make a file private, encrypt it before uploading.  This holds true for any cloud service!
+#+BEGIN_EXAMPLE
+# Quick password encryption
+openssl enc -d -aes-256-cbc
+#+END_EXAMPLE
+
+* Example uses
+Syncing installed packages to a new computer (Arch Linux)
+#+BEGIN_EXAMPLE
+$ pacman -Qqen > packages.txt
+$ scp packages.txt user@conf.host:
+# new machine
+$ wget https://conf.host/user/packages.txt
+$ pacman -S - packages.txt
+#+END_EXAMPLE
+
 * REST API
+URL base: https://api.conf.host
 ** GET /:username/hashes
 Get all hashes associated with a user.
 
 To run your own ipfs daemon and pin your own files for guaranteed access, pipe the output of this route into =ipfs pin=.
 #+BEGIN_EXAMPLE
-curl https://conf.host/nivekuil/hashes | ipfs pin add
+curl https://api.conf.host/user/hashes | ipfs pin add
 #+END_EXAMPLE
