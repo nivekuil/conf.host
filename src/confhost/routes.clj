@@ -2,8 +2,10 @@
   (:require
    [clojure.string :as string]
    [compojure.core :refer [defroutes GET POST]]
+   [compojure.route :refer [not-found]]
    [stencil.core :refer [render-string render-file]]
-   [ring.util.response :refer [redirect]]
+   [ring.util.response :refer [redirect charset]]
+   [clj-ipfs-api.core :as ipfs]
    [confhost.httpclient :as httpclient]
    [confhost.render :as render]
    [confhost.search :as search]))
@@ -17,18 +19,16 @@
   (let [template-dir "templates/"]
     (render-file (str template-dir template-name) data-map)))
 
-(defn get-cookie
-  "Return the value of a cookie in the HTML request."
-  [cookie request]
-  (:value (get (:cookies request) cookie)))
-
 (defmacro cookie-or
   "Return the value of a cookie if it exists or a default value otherwise."
   [cookie default]
-  `(or (get-cookie ~cookie ~'request) ~default))
+  `(or (get-in ~'request [:cookies ~cookie :value]) ~default))
 
-(def not-found
-  (ring.util.response/not-found "You found the 404 page!  Try again."))
+(defn wrap-plain
+  "Add the text/plain header to the response body."
+  [body]
+  (charset {:headers {"Content-Type" "text/plain"}
+            :body body} "UTF-8"))
 
 (def index-get
   (GET "/" request
@@ -62,4 +62,12 @@
                            :body (render/files files)
                            :total total}))))
 
-(defroutes routes #'index-get #'index-post #'user-get #'not-found)
+(def user-file
+  ;; Need the regex for :filename because compojure treats "." as a separator
+  (GET ["/:username/:filename", :filename #"[[a-z]\.]+"] [username filename]
+       (let [query (search/query-file username filename)
+             body (ipfs/cat (-> query :hits first :_id))]
+         (wrap-plain body))))
+
+(defroutes routes
+  #'index-get #'index-post #'user-get #'user-file (not-found "404"))
