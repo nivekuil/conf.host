@@ -11,21 +11,18 @@ from ipfsApi import Client
 from elasticsearch import Elasticsearch
 
 ipfs = Client('127.0.0.1', 5001)
-es = Elasticsearch(
-    hosts = ['127.0.0.1:9200'],
-)
+es = Elasticsearch(hosts=['127.0.0.1:9200'])
 airlock = "/var/local/confhost/airlock/"
 path_len = len(airlock.split(os.path.sep))
 index_name = "resource"         # Elasticsearch index to insert resources into
 
+
 def push():
     Timer(1, push).start()
     for entry in os.scandir(airlock):
-        # TODO: Handle directories
-        if entry.is_dir():
-            continue
 
         resource = entry.path
+        stat = entry.stat()
 
         # If fuser has any output, then the file is currently being used
         # by another process.  This likely means that is is still being
@@ -33,44 +30,58 @@ def push():
         if run(["fuser", resource], stdout=PIPE).stdout:
             continue
 
-        stat = entry.stat()
         # Get username by looking at file owner
         username = pwd.getpwuid(stat.st_uid).pw_name
-
+        # TODO: input validation
         if len(username) == 0:
             raise ValueError("Username cannot be empty.")
 
-        # Add file to IPFS
-        resource_hash = ipfs.add(resource)[0]["Hash"]
-        print("Adding to IPFS " + resource_hash)
+        # add_to_hashlist(resource_hash, stat.st_mtime * 1000)
+        # Only add/pin files < 1MB
+        if stat.st_size < 1000000:
+            resource_hash = ipfs.add(resource)[0]["Hash"]
+            print("Adding to IPFS " + resource_hash)
 
-        body = {
-            'owner': username,
-            'filename': entry.name,
-            'extension': entry.name.split(".")[-1],
-            'filesize': stat.st_size,
-            'mtime': int(stat.st_mtime * 1000),
-            'contents': "",
-        }
-        with open(resource) as f:
+        # TEMPORARY: Only add files, not directories to ES.
+        if entry.is_file():
+            add_to_elastic(resource, username, entry.name, stat.st_size,
+                           entry.st_mtime)
+
+        print("Ejecting ", resource)
+        run(["rm", "-r", resource])
+
+
+def add_to_elastic(path, ipfs_hash, username, filename, filesize, mtime):
+    print("Adding to elasticsearch ", filename)
+    body = {
+        'owner': username,
+        'filename': filename,
+        'extension': filename.split(".")[-1],
+        'filesize': filesize,
+        'mtime': int(mtime * 1000),
+        'contents': "",
+    }
+
+    # Only add file contents to Elasticsearch if < 100kB
+    if filesize < 100000:
+        with open(path) as f:
             body["contents"] = f.read()
 
-        print("Adding to elasticsearch ", resource)
-        # Add file to Elasticsearch
-        es.index(
-            index = index_name,
-            doc_type = username,
-            id = resource_hash,
-            body = body
-        )
+    es.index(index=index_name, doc_type=username,
+             id=ipfs_hash, body=body)
 
-        print("removing ", resource)
-        os.remove(resource)
 
-        # Remove only empty directories, i.e. username directories after
-        # all internal files have been uploaded to the cluster
-        # try: os.rmdir(root)
-        # except: continue
+def add_to_hashlist(new_hash, time):
+    # peer_id = ipfs.id()['ID']
+    current_hashlist_hash = ipfs.name_resolve()['Path']
+    current_hashlist = ipfs.cat(current_hashlist_hash).split('\n')
+    # Append the new hash
+    new_hashlist = current_hashlist.append(new_hash)
+    # Store the old hashlist hash on the first line of the new hashlist
+    # followed by a space and the epoch time (in ms)
+    new_hashlist[0] = current_hashlist_hash + " " + time
+    new_hashlist_hash = ipfs.add('\n'.join(new_hashlist))[0]["Hash"]
+    ipfs.name_publish(new_hashlist_hash)
 
 if __name__ == "__main__":
     push()
