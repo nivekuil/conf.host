@@ -1,25 +1,25 @@
 #!/usr/bin/env python3
-from flask import Flask, request
+from bottle import post, request, run as bottle_run
 from subprocess import run
-from os import mkdir, chmod
+from os import chmod
 from shutil import chown
 
-app = Flask(__name__)
 shell = "/usr/bin/rssh"
 home = "/var/local/confhost/airlock"
 groupname = "users"
 
-@app.route("/", methods=['POST'])
+
+@post("/")
 def post():
-    username = request.form.get('username')
-    pubkey = request.form.get('pubkey')
+    username = request.forms.get('username')
+    pubkey = request.forms.get('pubkey')
     authorized_keys = "/etc/ssh/authorized_keys/" + username
 
     # TODO: Actual input validation and error handling
     if len(username) < 2 or len(pubkey) < 10:
-        return
+        return "404"
     if username == "root":
-        return
+        return "404"
 
     try:
         run(["useradd", "--shell", shell, "-g", groupname,
@@ -27,8 +27,9 @@ def post():
     except Exception as e:
         # Check if file exists
         if e.errno == 17:
-            print("User exists, adding key to authorized_keys.")
-        else: print(e)
+            return "ERROR: That user already exists."
+        else:
+            return e
 
     with open(authorized_keys, 'a+') as f:
         f.write(pubkey)
@@ -39,4 +40,4 @@ def post():
     return request.data
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    bottle_run(host='0.0.0.0', port=5000)
