@@ -1,16 +1,34 @@
 <head>
-    <title>{{username}}@conf.host</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-3.0.0.slim.min.js"
+            integrity="sha256-Rf4BadfyCtsvHmO89BUZcbYvNNvZvOT08ALfEzvCsD0="
+            crossorigin="anonymous"></script>
+    <!-- <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/pojoaque.min.css"> -->
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="/css/index.css">
     <link rel="stylesheet" href="/css/user.css">
-    <!-- <script src="/js/user.js"></script> -->
+    <script src="/js/sorttable.js"></script>
+    <script src="/js/user.js"></script>
+    <title>{{username}}@conf.host</title>
 </head>
 <body>
-    <h1>{{username}}@conf.host&#58;</h1>
-    <table>
-        <tr>
-            <th class="name">Name</th>
-            <th class="size">Size</th>
-            <th class="mtime">Last modified</th>
-        </tr>
-        {{{results}}}
-    </table>
+    <h1><a href="/">◄</a>&nbsp;{{username}}@conf.host&#58;</h1>
+    <div class="flex">
+        <table class="sortable">
+            <tr>
+                <th class="extension">Type</th>
+                <th class="filename">Name</th>
+                <th class="filesize">Size</th>
+                <th class="mtime">Uploaded</th>
+            </tr>
+            {{{rows}}}
+        </table>
+        <div id="contents-container">
+            <pre id="contents"></pre>
+        </div>
+    </div>
+    <div id="footer">
+        <small>Showing {{total}} out of {{total}} results.</small>
+    </div>
 </body>
