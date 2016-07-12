@@ -7,6 +7,7 @@ import os
 import pwd
 from subprocess import run, PIPE
 from threading import Timer
+from shutil import rmtree
 from ipfsApi import Client
 from elasticsearch import Elasticsearch
 
@@ -48,7 +49,7 @@ def push():
                            entry.st_mtime)
 
         print("Ejecting ", resource)
-        run(["rm", "-r", resource])
+        rmtree(resource)
 
 
 def add_to_elastic(path, ipfs_hash, username, filename, filesize, mtime):
