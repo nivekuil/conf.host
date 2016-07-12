@@ -4,7 +4,7 @@
             [clojure.contrib.humanize :as humanize]
             [clojure.string :as string]))
 
-(def base-uri "http://ipfs.io/ipfs/")
+(def base-uri "api/ipfs/")
 (def icon-dir "/icons/")
 ;;; Set of file extensions that have associated icons
 (def icons (confhost.util/get-filenames (str "resources/public" icon-dir)))
@@ -17,7 +17,8 @@
           mtime (:mtime x)]
       [:tr
        [:td {:class "extension" :sorttable_customkey ext :title ext}
-        (if (contains? icons ext) [:img {:src (str icon-dir ext ".svg")}] ext)]
+        (if (contains? icons ext) [:img {:src (str icon-dir ext ".svg")}]
+            (humanize/truncate ext 11))]
        [:td {:class "filename"}
         [:a {:href (str base-uri (:hash x))} filename]]
        [:td {:class "filesize" :sorttable_customkey filesize}

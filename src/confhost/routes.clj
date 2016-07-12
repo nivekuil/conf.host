@@ -59,7 +59,7 @@
              total (:total query)]
          (render-template "user"
                           {:username username
-                           :body (render/files files)
+                           :rows (render/files files)
                            :total total}))))
 
 (def user-file
