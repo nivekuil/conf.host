@@ -39,10 +39,24 @@ $ pacman -S - packages.txt
 
 * REST API
 URL base: https://api.conf.host
-** GET /:username/hashes
+** GET =/hash/:hash=
+Get the contents of the IPFS hash.
+
+** GET =/:username/raw/:filename=
+Get the raw text of the most recently uploaded file with that filename.
+
+This is currently equivalent to https://conf.host/:username/:filename.
+
+#+BEGIN_EXAMPLE
+curl https://api.conf.host/$USER/raw/example.txt
+# currently behaves equivalently to
+curl https://conf.host/$USER/example.txt
+#+END_EXAMPLE
+
+** GET =/:username/hashes=
 Get all hashes associated with a user.
 
 To run your own ipfs daemon and pin your own files for guaranteed access, pipe the output of this route into =ipfs pin=.
 #+BEGIN_EXAMPLE
-curl https://api.conf.host/user/hashes | ipfs pin add
+curl https://api.conf.host/$USER/hashes | ipfs pin add
 #+END_EXAMPLE
