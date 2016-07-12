@@ -1,27 +1,31 @@
 <head>
     <title>conf.host</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/css/index.css">
     <script src="/js/index.js"></script>
 </head>
 <body class="{{lights}}">
-    <h1>conf.host</h1>
-    <h2>A service for storing, syncing, and sharing configuration files.</h2>
+    <h1 class="mono">conf.host</h1>
+    <h2 class="mono">
+        A service for storing, syncing, and sharing configuration files
+    </h2>
     <ol>
-        <li>Upload your SSH public key with a short, unique username
+        <li>Upload your SSH public key with a unique, URL-safe username.
+            <pre>$ export USER={username}
+$ curl -d "username=$USER" --data-urlencode "pubkey=$(cat ~/.ssh/id_rsa.pub)" https://conf.host</pre>
+            or use the form:
             <form method="post">
                 <input type="text" name="pubkey" placeholder="SSH pubkey">
                 <input type="text" name="username" placeholder="username">
                 <input type="submit" value="Upload">
             </form>
             <div id="message"></div>
-            (or from the command line: curl --data "")
         </li>
         <li>
-           scp your files to <b>{{username}}@conf.host</b>
+            scp your files to <b class="mono">{{username}}@conf.host:</b>
         </li>
         <li>
-            View them at <b>https://conf.host/{{username}}</b>
-            <br>
+            View them at <b class="mono">https://conf.host/{{username}}</b>
         </li>
     </ol>
 
