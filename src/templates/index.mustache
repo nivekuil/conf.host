@@ -2,11 +2,14 @@
     <title>conf.host</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/css/index.css">
+    <script src="https://code.jquery.com/jquery-3.0.0.slim.min.js"
+            integrity="sha256-Rf4BadfyCtsvHmO89BUZcbYvNNvZvOT08ALfEzvCsD0="
+            crossorigin="anonymous"></script>
     <script src="/js/index.js"></script>
 </head>
 <body class="{{lights}}">
     <h1 class="mono">conf.host</h1>
-    <h2 class="mono">
+    <h2>
         A service for storing, syncing, and sharing configuration files
     </h2>
     <ol>
@@ -14,7 +17,7 @@
             <pre>$ export USER={username}
 $ curl -d "username=$USER" --data-urlencode "pubkey=$(cat ~/.ssh/id_rsa.pub)" https://conf.host</pre>
             or use the form:
-            <form method="post">
+            <form>
                 <input type="text" name="pubkey" placeholder="SSH pubkey">
                 <input type="text" name="username" placeholder="username">
                 <input type="submit" value="Upload">
@@ -22,7 +25,7 @@ $ curl -d "username=$USER" --data-urlencode "pubkey=$(cat ~/.ssh/id_rsa.pub)" ht
             <div id="message"></div>
         </li>
         <li>
-            scp your files to <b class="mono">{{username}}@conf.host:</b>
+            scp your files to <b class="mono">{{username}}@ssh.conf.host:</b>
         </li>
         <li>
             View them at <b class="mono">https://conf.host/{{username}}</b>
@@ -32,8 +35,8 @@ $ curl -d "username=$USER" --data-urlencode "pubkey=$(cat ~/.ssh/id_rsa.pub)" ht
         <br>
         <a href="https://github.com/nivekuil/conf.host">More info</a>
     </div>
-    <div id="beg" title="poor undergrad is poor, pls help keep site alive">
+    <div id="beg" title="pls keep site alive">
         <pre>GkcL5tu4oQdzBA6dXTqw81pw7GxUmtU3N</pre></div>
-    <button id="toggle" onclick="toggleLights()">Lights {{not-lights}}</button>
+    <!-- <button id="toggle" onclick="toggleLights()">Lights {{not-lights}}</button> -->
 
 </body>

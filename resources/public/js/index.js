@@ -1,5 +1,5 @@
 function toggleLights() {
-  var lights = document.body.className;
+  let lights = document.body.className;
   if (lights === "on") {
     document.body.className = "off";
     document.cookie = "lights=off";
@@ -11,3 +11,15 @@ function toggleLights() {
     document.getElementById("toggle").innerHTML = "Lights off";
   }
 }
+
+$(document).ready(function() {
+  $("form").submit(function(e) {
+    e.preventDefault();
+    console.log("yo");
+    let url = $(location).attr('href');
+    window.fetch(url, {method: 'POST'})
+      .then(response => response.text())
+      .then(text => $("#message").html(text));
+  });
+
+});

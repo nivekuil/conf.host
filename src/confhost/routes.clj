@@ -43,14 +43,7 @@
 (def index-post
   (POST
    "/" {{username "username"} :params, {pubkey "pubkey"} :params}
-   ;; (println (true? ( username pubkey)))
-   ;; TODO: Input validation
-   (if (or (string/blank? username)
-           (string/blank? pubkey))
-     (redirect "/")                     ;TODO: AJAX message
-     (do (httpclient/register username pubkey)
-         (assoc (redirect "/")
-                :cookies {"username" {:value username}})))))
+   (httpclient/register username pubkey)))
 
 (def user-get
   (GET "/:username" [username]
@@ -64,6 +57,7 @@
 
 (def user-file
   ;; Need the regex for :filename because compojure treats "." as a separator
+  ;; TODO: Use API
   (GET ["/:username/:filename", :filename #"[[a-z]\.]+"] [username filename]
        (let [query (search/query-file username filename)
              body (ipfs/cat (-> query :hits first :_id))]

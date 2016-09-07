@@ -45,11 +45,11 @@ def push():
 
         # TEMPORARY: Only add files, not directories to ES.
         if entry.is_file():
-            add_to_elastic(resource, username, entry.name, stat.st_size,
-                           entry.st_mtime)
+            add_to_elastic(resource, resource_hash, username,
+                           entry.name, stat.st_size, stat.st_mtime)
 
         print("Ejecting ", resource)
-        rmtree(resource)
+        run(["rm", "-r", resource])
 
 
 def add_to_elastic(path, ipfs_hash, username, filename, filesize, mtime):

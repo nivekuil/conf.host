@@ -1,12 +1,34 @@
+@import url('https://fonts.googleapis.com/css?family=Asap');
+
 body {
-    margin: 1em 2em;
+    width: 820px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 2em;
     transition: 0.5s;
+    font-family: asap
 } .on {
-    color: #111;
-    background-color: #EEE;
+    color: #222;
 } .off {
     color: #DDD;
     background-color: #222;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+ol {
+    margin-left: auto;
+}
+a {
+  text-decoration: none;
+  color: #149;
+}
+a:hover { color: #941; }
+
+pre {
+    overflow-x: auto;
 }
 
 .mono {
@@ -14,7 +36,19 @@ body {
     font-size-adjust: 0.45;
 }
 
+#beg {
+    font-size: 0.8em;
+    position: absolute;
+    bottom: 0;
+    right: 1em;
+}
+
 #toggle {
     position: absolute;
     bottom: 1em;
+}
+
+#message {
+    color: #931;
+    font-family: monospace;
 }

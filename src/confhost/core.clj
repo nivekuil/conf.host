@@ -6,15 +6,18 @@
             [immutant.web :as web]
             [ring.middleware.cookies :refer [wrap-cookies]]
             [ring.middleware.params :refer [wrap-params]]
-            [ring.middleware.resource :refer [wrap-resource]]))
+            [ring.middleware.resource :refer [wrap-resource]]
+            [ring.middleware.content-type :refer [wrap-content-type]]))
 
 (def app
   (-> #'routes
-      (wrap-cookies) (wrap-params) (wrap-resource "public")))
+      (wrap-cookies) (wrap-params) (wrap-resource "public")
+      (wrap-content-type)))
 
 (def api
   (-> #'api-routes
-      (wrap-cookies) (wrap-params) (wrap-resource "public")))
+      (wrap-cookies) (wrap-params) (wrap-resource "public")
+      (wrap-content-type)))
 #_
 (do (web/run app {:host "0.0.0.0" :port 3000})
     (web/run api {:host "0.0.0.0" :port 3000
@@ -26,7 +29,8 @@
                                   :path "/api"})))
 
 (defn -main [& args]
-  (defonce server (web/run app {:host "localhost" :port 3000})))
+  (defonce server (web/run app {:host "0.0.0.0" :port 3000}))
+  (defonce api-server (web/run api {:host "0.0.0.0" :port 3000 :path "/api"})))
 
 #_
 (defn -main [& args]

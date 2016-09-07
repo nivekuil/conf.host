@@ -17,8 +17,9 @@
           mtime (:mtime x)]
       [:tr
        [:td {:class "extension" :sorttable_customkey ext :title ext}
-        (if (contains? icons ext) [:img {:src (str icon-dir ext ".svg")}]
-            (humanize/truncate ext 11))]
+        (if (contains? icons ext)
+          [:img {:src (str icon-dir ext ".svg") :alt ext}]
+          (humanize/truncate ext 11))]
        [:td {:class "filename"}
         [:a {:href (str base-uri (:hash x))} filename]]
        [:td {:class "filesize" :sorttable_customkey filesize}
