@@ -1,0 +1,21 @@
+<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="165.35mm" width="144.73mm" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="0 0 512.80871 585.89206">
+ <g id="layer1" transform="translate(-120.84 -225.46)">
+  <rect id="rect3336" height="562.6" width="478.19" y="248.75" x="120.84" fill="#4d4d4d"/>
+  <rect id="rect3348" rx="0" ry="0" height="211.81" width="290.35" y="225.46" x="343.3" fill="#1a1a1a"/>
+  <rect id="rect3389" height="28.039" width="233.07" y="740.73" x="336.14" fill="#b3b3b3"/>
+  <g id="g8247" fill="#ccc" transform="matrix(1.4308 0 0 1.4308 -284.05 -334.31)">
+   <g id="g8230">
+    <rect id="rect8224" height="22.026" width="141.59" y="622.08" x="362.64"/>
+    <rect id="rect8226" height="22.026" width="141.59" y="622.08" x="362.64"/>
+    <rect id="rect8228" height="22.026" width="141.59" y="670.08" x="362.64"/>
+   </g>
+   <g id="g8235" transform="matrix(0 1 -1 0 1090.5 223.66)">
+    <rect id="rect8237" height="22.026" width="141.59" y="622.08" x="362.64"/>
+    <rect id="rect8239" height="22.026" width="141.59" y="622.08" x="362.64"/>
+    <rect id="rect8241" height="22.026" width="141.59" y="670.08" x="362.64"/>
+   </g>
+   <rect id="rect8243" height="104.43" width="22.026" y="587.66" x="532.09"/>
+   <rect id="rect8245" height="22.812" width="21.239" y="705.04" x="532.58"/>
+  </g>
+ </g>
+</svg>

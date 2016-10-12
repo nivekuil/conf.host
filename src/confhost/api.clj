@@ -28,8 +28,7 @@
 
 (def api-user-file
   ;; Need the regex for :filename because compojure treats "." as a separator
-  (GET ["/:username/raw/:filename", :filename #"[[a-z]\.]+"]
-       [username filename]
+  (GET ["/:username/raw/:filename"] [username filename]
        (let [query (search/query-file username filename)]
          (wrap-api (ipfs/cat (-> query :hits first :_id))))))
 

@@ -58,7 +58,7 @@
 (def user-file
   ;; Need the regex for :filename because compojure treats "." as a separator
   ;; TODO: Use API
-  (GET ["/:username/:filename", :filename #"[[a-z]\.]+"] [username filename]
+  (GET ["/:username/:filename"] [username filename]
        (let [query (search/query-file username filename)
              body (ipfs/cat (-> query :hits first :_id))]
          (wrap-plain body))))
