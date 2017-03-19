@@ -42,6 +42,10 @@ def push():
         if stat.st_size < 1000000:
             resource_hash = ipfs.add(resource)[0]["Hash"]
             print("Adding to IPFS " + resource_hash)
+        else:
+            run(["rm", "-r", resource])
+            print("File exceeded size limit, not adding to IPFS: " + resource)
+            continue
 
         # TEMPORARY: Only add files, not directories to ES.
         if entry.is_file():
